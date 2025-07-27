@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mini cuestionario IAAS</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 40px;
+      background-color: #f4f4f4;
+      color: #333;
+    }
+    h2 {
+      color: #005b96;
+    }
+    .bloque {
+      background: #fff;
+      padding: 20px;
+      margin-bottom: 30px;
+      border-radius: 10px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+    button {
+      margin-top: 10px;
+      padding: 8px 16px;
+      background-color: #005b96;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #003f6b;
+    }
+    .respuesta {
+      font-weight: bold;
+      margin-top: 10px;
+    }
+    .correcciones {
+      margin-top: 10px;
+      color: #b30000;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Mini cuestionario de prevención de IAAS por unidad clínica</h1>
+
+  <div id="bloques"></div>
+
+  <script src="https://cdn.jsdelivr.net/gh/gepetin/cuestionarios-iaas@main/cuestionarios.js"></script>
+  <script>
+    const respuestasCorrectas = {
+      Cen: [1, 2],
+      Ana: [1, 1],
+      Ima: [1, 1],
+      Lab: [1, 0],
+      Psi: [0, 1],
+      Dia: [1, 2],
+      Qui: [1, 1],
+      Den: [1, 1]
+    };
+
+    for (const [prefix, resps] of Object.entries(respuestasCorrectas)) {
+      window[`check_${prefix}`] = function(button) {
+        let correctas = 0;
+        let detalles = [];
+        resps.forEach((val, i) => {
+          const nombre = `${prefix}_${i}`;
+          const seleccionado = document.querySelector(`input[name='${nombre}']:checked`);
+          if (!seleccionado) {
+            detalles.push(`Pregunta ${i + 1}: No respondida`);
+            return;
+          }
+          const valor = parseInt(seleccionado.value);
+          if (valor === val) {
+            correctas++;
+          } else {
+            const correcta = document.querySelector(`input[name='${nombre}'][value='${val}']`).parentElement.innerText;
+            detalles.push(`Pregunta ${i + 1}: Respuesta correcta: ${correcta}`);
+          }
+        });
+        document.getElementById(`res_${prefix}`).textContent = `Puntaje: ${correctas}/${resps.length}`;
+        document.getElementById(`correcciones_${prefix}`).innerHTML = detalles.join('<br>');
+      }
+    }
+  </script>
+
+</body>
+</html>
